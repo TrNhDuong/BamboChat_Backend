@@ -1,0 +1,181 @@
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated background orbs */
+.auth-page::before,
+.auth-page::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.25;
+    animation: float 10s ease-in-out infinite;
+}
+
+.auth-page::before {
+    width: 500px;
+    height: 500px;
+    background: rgba(5, 150, 105, 0.12);
+    top: -150px;
+    right: -100px;
+}
+
+.auth-page::after {
+    width: 400px;
+    height: 400px;
+    background: rgba(13, 148, 136, 0.1);
+    bottom: -100px;
+    left: -100px;
+    animation-delay: -5s;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    padding: 40px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xl);
+    animation: slideUp 0.4s ease-out;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    gap: 12px;
+}
+
+.auth-brand-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--bambo-gradient);
+    background-size: 200% 200%;
+    animation: gradientShift 4s ease infinite, breathe 3s ease-in-out infinite;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
+}
+
+.auth-brand-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: white;
+}
+
+.auth-brand-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: var(--bambo-gradient);
+    background-size: 200% 200%;
+    animation: gradientShift 4s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+}
+
+.auth-card h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+}
+
+.auth-card p.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.form-group .input {
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid var(--border);
+    transition: all var(--transition);
+    font-size: 0.9rem;
+}
+
+.form-group .input:focus {
+    border-color: var(--bambo-green);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.auth-card .btn-primary {
+    width: 100%;
+    padding: 13px;
+    font-size: 0.95rem;
+    margin-top: 10px;
+    border-radius: var(--radius-md);
+    background: var(--bambo-gradient);
+    background-size: 200% 200%;
+    animation: gradientShift 4s ease infinite;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+.auth-card .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.auth-card .btn-primary:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.auth-link a {
+    color: var(--bambo-green);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--transition-fast);
+}
+
+.auth-link a:hover {
+    color: var(--bambo-green-hover);
+    text-decoration: underline;
+}
+
+.logo-icon {
+    display: none;
+}

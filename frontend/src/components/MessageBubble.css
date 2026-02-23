@@ -1,0 +1,115 @@
+.message-bubble-wrapper {
+    display: flex;
+    margin-bottom: 3px;
+    padding: 0 16px;
+    animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.message-bubble-wrapper.sent {
+    justify-content: flex-end;
+}
+
+.message-bubble-wrapper.received {
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.message-avatar-container {
+    width: 28px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 2px;
+}
+
+.message-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bambo-green);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-xs);
+}
+
+.message-avatar-spacer {
+    width: 28px;
+}
+
+/* Bubbles */
+.message-bubble {
+    max-width: 60%;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    word-wrap: break-word;
+    word-break: break-word;
+    position: relative;
+    border-radius: 18px;
+}
+
+.message-bubble-wrapper.sent .message-bubble {
+    background: var(--bambo-green);
+    color: white;
+    box-shadow: var(--shadow-sm);
+    border-bottom-right-radius: 4px;
+}
+
+.message-bubble-wrapper.received .message-bubble {
+    background: #f1f5f9;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xs);
+    border-bottom-left-radius: 4px;
+}
+
+.message-bubble-wrapper.has-avatar {
+    margin-top: 8px;
+}
+
+.message-time {
+    font-size: 0.65rem;
+    margin-top: 4px;
+    opacity: 0;
+    text-align: right;
+    transition: opacity var(--transition);
+}
+
+.message-bubble-wrapper.sent .message-time {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.message-bubble-wrapper.received .message-time {
+    color: var(--text-muted);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 0.8;
+    }
+}
+
+/* Hover to show time */
+.message-bubble-wrapper:hover .message-time {
+    opacity: 0.8;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

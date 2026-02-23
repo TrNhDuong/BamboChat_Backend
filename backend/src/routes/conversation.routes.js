@@ -1,0 +1,19 @@
+const { Router } = require('express');
+const conversationController = require('../controllers/ConversationController');
+const authMiddleware = require('../middlewares/authMiddleware');
+
+const router = Router();
+
+// All conversation routes require authentication
+router.use(authMiddleware);
+
+// POST /api/conversations
+router.post('/', conversationController.create);
+
+// GET /api/conversations
+router.get('/', conversationController.getConversations);
+
+// GET /api/conversations/:id/messages
+router.get('/:id/messages', conversationController.getMessages);
+
+module.exports = router;
