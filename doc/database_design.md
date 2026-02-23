@@ -15,9 +15,10 @@ Lưu trữ thông tin định danh. Sử dụng `id` tùy chọn của người 
 | `email` | String | Email dùng cho OTP/OAuth (Unique, Index) |
 | `passwordHash` | String | Mật khẩu đã băm (Bcrypt) |
 | `isVerified` | Boolean | Trạng thái xác thực (Default: false) |
-| `displayName` | String | Tên hiển thị trên giao diện |
-| `bio` | String | Giới thiệu bản thân ngắn gọn |
-| `googleId` | String | ID từ Google OAuth (Unique, Sparse Index) |
+| `displayName` | String | Display name on the UI |
+| `bio` | String | Short self-introduction |
+| `avatar` | Object | `{ url, public_id }` for profile picture |
+| `googleId` | String | ID from Google OAuth (Unique, Sparse Index) |
 
 * **Indexes:** `unique: true` trên `email`, `sparse: true` trên `googleId`.
 
@@ -66,8 +67,8 @@ Liên kết người dùng vào hội thoại. Quản lý trạng thái "Đã xe
 | :--- | :--- | :--- |
 | `conversationId`| ObjectId(**FK**) | ID phòng chat |
 | `userId` | String (**FK**) | ID người dùng (Index) |
-| `lastReadMessageId`| String | ID tin nhắn cuối cùng đã đọc |
-| `role` | Enum | `admin`, `member` |
+| `lastReadMessageId`| String | ID of the last message read |
+| `role` | Enum | `admin`, `member` (Controls kick permissions) |
 
 * **Indexes:** Composite Unique `{ conversationId, userId }`.
 

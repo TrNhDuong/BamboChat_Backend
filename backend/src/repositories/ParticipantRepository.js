@@ -24,6 +24,10 @@ class ParticipantRepository {
     async findByConversation(conversationId) {
         return Participant.find({ conversationId });
     }
+
+    async removeParticipant(conversationId, userId) {
+        return Participant.findOneAndDelete({ conversationId, userId });
+    }
 }
 
 module.exports = new ParticipantRepository();

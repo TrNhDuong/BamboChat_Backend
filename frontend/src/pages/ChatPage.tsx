@@ -133,6 +133,7 @@ const ChatPage = () => {
                         isFriend={activeConversation ? isFriend(getOtherUserId(activeConversation)) : false}
                         isDirectMessage={activeConversation ? conversations.find(c => c._id === activeConversation)?.type === 'direct_message' : false}
                         participants={activeConversation ? conversations.find(c => c._id === activeConversation)?.participants || [] : []}
+                        onParticipantsChange={loadConversations}
                     />
                 )}
             </div>

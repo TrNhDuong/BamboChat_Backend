@@ -1,10 +1,25 @@
+/* Outer flex row: chat area + detail pane side by side */
+.chat-window-outer {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+    gap: 8px;
+    /* gap between chat card and detail pane card */
+}
+
 .chat-window {
     flex: 1;
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: #ffffff;
+    background: var(--bg-primary);
     position: relative;
+    min-width: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
 }
 
 /* ─── Chat Header ─── */

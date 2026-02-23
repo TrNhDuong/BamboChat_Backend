@@ -11,6 +11,13 @@
     flex-direction: column;
     min-width: 0;
     position: relative;
+    padding: 10px;
+    /* breathing room so cards float on all sides */
+    background: var(--chat-bg-canvas, #e9eef3);
+}
+
+.dark .chat-main {
+    background: var(--chat-bg-canvas, #0a0f1e);
 }
 
 .user-bar {

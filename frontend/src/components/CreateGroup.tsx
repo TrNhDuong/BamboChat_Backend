@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { conversationAPI, friendAPI } from '../services/api';
+import type { User } from '../types';
 import './CreateGroup.css';
 
 interface CreateGroupProps {
@@ -9,7 +10,7 @@ interface CreateGroupProps {
 
 const CreateGroup = ({ onClose, onSuccess }: CreateGroupProps) => {
     const [groupName, setGroupName] = useState('');
-    const [friends, setFriends] = useState<string[]>([]);
+    const [friends, setFriends] = useState<User[]>([]);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -82,19 +83,24 @@ const CreateGroup = ({ onClose, onSuccess }: CreateGroupProps) => {
                         {friends.length === 0 ? (
                             <p className="no-friends">Bạn chưa có bạn bè nào để thêm vào nhóm</p>
                         ) : (
-                            friends.map(friendId => (
-                                <label key={friendId} className="friend-selection-item">
+                            friends.map(friend => (
+                                <label key={friend._id} className="friend-selection-item">
                                     <div className="friend-checkbox-wrapper">
                                         <input
                                             type="checkbox"
-                                            checked={selectedIds.includes(friendId)}
-                                            onChange={() => handleToggleMember(friendId)}
+                                            checked={selectedIds.includes(friend._id)}
+                                            onChange={() => handleToggleMember(friend._id)}
                                         />
                                     </div>
-                                    <div className="friend-small-avatar">
-                                        {friendId.charAt(0).toUpperCase()}
+                                    <div className="friend-small-avatar" style={{ overflow: 'hidden' }}>
+                                        {friend.avatar?.url ? (
+                                            <img src={friend.avatar.url} alt={friend.displayName || friend._id}
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                                        ) : (
+                                            (friend.displayName || friend._id).charAt(0).toUpperCase()
+                                        )}
                                     </div>
-                                    <span className="friend-id">{friendId}</span>
+                                    <span className="friend-id">{friend.displayName || friend._id}</span>
                                 </label>
                             ))
                         )}

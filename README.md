@@ -1,81 +1,85 @@
-# BamboChat - Hệ thống Nhắn tin Thời gian thực
+# BamboChat - Real-time Messaging System
 
-BamboChat là một ứng dụng nhắn tin hiện đại, hỗ trợ trò chuyện thời gian thực, quản lý bạn bè và đăng nhập linh hoạt.
-
----
-
-## Tính năng chính
-
-*   **Trò chuyện Real-time**: Gửi và nhận tin nhắn tức thì bằng WebSocket (Socket.io).
-*   **Xác thực đa năng**: Hỗ trợ đăng nhập bằng tài khoản (xác thực OTP qua Email) hoặc Google OAuth2.
-*   **Quản lý Bạn bè**: Tìm kiếm người dùng, gửi lời mời kết bạn và quản lý danh sách liên lạc.
-*   **Hội thoại**: Hỗ trợ chat 1-1 và tương lai mở rộng sang chat nhóm.
-*   **Giao diện hiện đại**: Thiết kế tối giản, hiệu ứng mượt mà và hỗ trợ Dark Mode.
+BamboChat is a modern messaging application that supports real-time communication, friend management, and a flexible login system.
 
 ---
 
-## Công nghệ sử dụng
+## Key Features
+
+*   **Real-time Chat**: Instantly send and receive messages using WebSockets (Socket.io).
+*   **Multi-mode Authentication**: Login via traditional accounts (Email OTP verification) or Google OAuth2.
+*   **User Avatars**: Personalized profile pictures powered by Cloudinary integration.
+*   **Friend Management**: Search for users, send friend requests, and manage your contact list.
+*   **Conversation Types**: Supports both 1-on-1 direct messages and multi-user **Group Chats**.
+*   **Group Management**: Create rooms, manage participants, and admin-only "kick" functionality.
+*   **Modern UI/UX**: Premium "floating card" design with rounded corners, fluid animations, and Dark Mode support.
+*   **Message Search**: Quickly find past messages within any conversation via the Detail Pane.
+
+---
+
+## Tech Stack
 
 ### Backend
-*   **Node.js & Express**: Máy chủ API.
-*   **MongoDB & Mongoose**: Cơ sở dữ liệu NoSQL.
-*   **Passport.js**: Xử lý Google OAuth2.
-*   **Socket.io**: Giao tiếp thời gian thực.
-*   **Brevo SDK**: Gửi email OTP.
+*   **Node.js & Express**: Core API server.
+*   **MongoDB & Mongoose**: NoSQL database and object modeling.
+*   **Passport.js**: Authentication middleware for Google OAuth2.
+*   **Socket.io**: Bi-directional real-time communication.
+*   **Cloudinary & Multer**: Cloud image storage and upload processing.
+*   **Brevo SDK**: SMTP service for sending OTP emails.
 
 ### Frontend
-*   **React (Vite)**: Framework giao diện.
-*   **TypeScript**: Đảm bảo an toàn kiểu dữ liệu.
-*   **Socket.io Client**: Kết nối WebSocket.
-*   **Vanilla CSS**: Hệ thống Design System tùy chỉnh.
+*   **React (Vite)**: Modern frontend library and build tool.
+*   **TypeScript**: Static type checking for robust code.
+*   **Socket.io Client**: WebSocket integration.
+*   **Vanilla CSS**: Custom Design System with a premium aesthetic.
 
 ---
 
-## Cấu trúc Thư mục
+## Directory Structure
 
-Dự án được tổ chức theo mô hình Monorepo đơn giản với hai thành phần chính:
+The project is organized as a monorepo with two main components:
 
 ```text
 .
-├── backend/                # Mã nguồn Server (Node.js/Express)
+├── backend/                # Server source code (Node.js/Express)
 │   ├── src/
-│   │   ├── config/         # Cấu hình DB, Passport, App
-│   │   ├── controllers/    # Xử lý Logic cho các Route
-│   │   ├── middlewares/    # Các bộ lọc (Auth, Error Handler)
-│   │   ├── models/         # Định nghĩa Schema MongoDB (Mongoose)
-│   │   ├── repositories/   # Tầng truy vấn dữ liệu trực tiếp
-│   │   ├── routes/         # Định nghĩa các API endpoints
-│   │   ├── services/       # Logic nghiệp vụ (Business Logic)
-│   │   ├── sockets/        # Xử lý sự kiện Real-time (Socket.io)
-│   │   ├── utils/          # Công cụ hỗ trợ (Mailler, UUIDv7...)
-│   │   └── server.js       # Điểm khởi đầu của Backend
-│   └── .env                # Biến môi trường Backend
-├── frontend/               # Mã nguồn Client (React/Vite)
+│   │   ├── config/         # DB, Passport, and App configurations
+│   │   ├── controllers/    # Route handler logic
+│   │   ├── middlewares/    # Custom filters (Auth, Error handling)
+│   │   ├── models/         # Mongoose Schema definitions
+│   │   ├── repositories/   # Data access layer (Direct DB queries)
+│   │   ├── routes/         # API endpoint definitions
+│   │   ├── services/       # Business logic layer
+│   │   ├── sockets/        # Real-time event handling (Socket.io)
+│   │   ├── utils/          # Utility functions (Mailer, Cloudinary...)
+│   │   └── server.js       # Backend entry point
+│   └── .env                # Backend environment variables
+├── frontend/               # Client source code (React/Vite)
 │   ├── src/
-│   │   ├── components/     # UI Components dùng chung
-│   │   ├── context/        # Quản lý State toàn cục (AuthContext)
-│   │   ├── pages/          # Các trang giao diện chính (Login, Chat...)
-│   │   ├── services/       # Gọi API và quản lý Socket
-│   │   └── App.tsx         # Cấu trúc Routing chính
-│   └── index.html          # File HTML gốc
-├── doc/                    # Thư mục chứa tài liệu kỹ thuật
-└── README.md               # Tài liệu tổng quan dự án
+│   │   ├── components/     # Reusable UI components
+│   │   ├── context/        # Global state management (AuthContext)
+│   │   ├── pages/          # Main application views (Login, Chat...)
+│   │   ├── services/       # API calling and Socket management
+│   │   └── App.tsx         # Main routing and entry component
+│   └── index.html          # Root HTML file
+├── doc/                    # Technical documentation directory
+└── README.md               # Project overview and documentation
 ```
 
 ---
 
-## Tài liệu chi tiết
+## Detailed Documentation
 
-Để hiểu sâu hơn về dự án, vui lòng tham khảo các tài liệu trong thư mục `doc/`:
+For deeper technical insights, please refer to the documents in the `doc/` directory:
 
-1.  [**Hướng dẫn Cài đặt (Setup Guide)**](doc/setup_guide.md): Cách chạy dự án trên máy của bạn.
-2.  [**Kiến trúc API (API Architecture)**](doc/api_architecture.md): Danh sách các Endpoint và mô hình phân lớp.
-3.  [**Thiết kế Database (Database Design)**](doc/database_design.md): Cấu trúc các bảng và mối quan hệ.
-4.  [**Luồng Xác thực (Authentication)**](doc/authentication.md): Chi tiết về JWT và Google Login.
-5.  [**Luồng WebSocket (WebSocket Flow)**](doc/websocket_flow.md): Cách hoạt động của tin nhắn thời gian thực.
+1.  [**Setup Guide**](doc/setup_guide.md): How to get the project running on your local machine.
+2.  [**API Architecture**](doc/api_architecture.md): List of endpoints and the layered architectural model.
+3.  [**Database Design**](doc/database_design.md): Schema structures and data relationships.
+4.  [**Authentication Flow**](doc/authentication.md): Details on JWT, OTP, and Google Login.
+5.  [**WebSocket Flow**](doc/websocket_flow.md): How real-time messaging and status updates work.
 
 ---
 
-## Giấy phép
+## License
 
-Dự án này được phát triển cho mục đích học tập và cá nhân.
+This project is developed for educational and personal use.

@@ -3,7 +3,10 @@ import type { Message } from '../types';
 import { conversationAPI } from '../services/api';
 import { getSocket } from '../services/socket';
 import MessageBubble from './MessageBubble';
-import { ClockIcon, WaveIcon, SendIcon, UserPlusIcon } from './Icons';
+import DetailPane from './DetailPane';
+import UserProfileModal from './UserProfileModal';
+import MessageSearchModal from './MessageSearchModal';
+import { ClockIcon, WaveIcon, SendIcon, UserPlusIcon, InfoIcon } from './Icons';
 import AddMember from './AddMember';
 import './ChatWindow.css';
 
@@ -13,7 +16,8 @@ interface ChatWindowProps {
     userId: string;
     isFriend: boolean;
     isDirectMessage: boolean;
-    participants: { _id: string; displayName: string | null; avatar?: { url: string; public_id: string } | null }[];
+    participants: { _id: string; displayName: string | null; avatar?: { url: string; public_id: string } | null; bio?: string | null; role?: string }[];
+    onParticipantsChange?: () => void;
 }
 
 const ChatWindow = ({
@@ -22,7 +26,8 @@ const ChatWindow = ({
     userId,
     isFriend,
     isDirectMessage,
-    participants
+    participants,
+    onParticipantsChange,
 }: ChatWindowProps) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
@@ -30,6 +35,9 @@ const ChatWindow = ({
     const [hasMore, setHasMore] = useState(true);
     const [typingUsers, setTypingUsers] = useState<string[]>([]);
     const [showAddMember, setShowAddMember] = useState(false);
+    const [showDetailPane, setShowDetailPane] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [showSearchModal, setShowSearchModal] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -154,141 +162,184 @@ const ChatWindow = ({
         );
     }
 
+    // Other participant (for DM profile modal)
+    const otherParticipant = isDirectMessage
+        ? participants.find((p) => p._id !== userId) || null
+        : null;
+
     return (
-        <div className="chat-window">
-            <div className="chat-header">
-                <div className="chat-header-avatar">
-                    {isDirectMessage ? (() => {
-                        const otherParticipant = participants.find(p => p._id !== userId);
-                        return otherParticipant?.avatar?.url ? (
-                            <img
-                                src={otherParticipant.avatar.url}
-                                alt={conversationName}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
-                            />
-                        ) : (
+        <div className="chat-window-outer">
+            <div className="chat-window">
+                <div className="chat-header">
+                    <div className="chat-header-avatar">
+                        {isDirectMessage ? (() => {
+                            const otherParticipant = participants.find(p => p._id !== userId);
+                            return otherParticipant?.avatar?.url ? (
+                                <img
+                                    src={otherParticipant.avatar.url}
+                                    alt={conversationName}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                                />
+                            ) : (
+                                typeof conversationName === 'string' && conversationName.length > 0
+                                    ? conversationName.charAt(0).toUpperCase()
+                                    : '?'
+                            );
+                        })() : (
                             typeof conversationName === 'string' && conversationName.length > 0
                                 ? conversationName.charAt(0).toUpperCase()
                                 : '?'
-                        );
-                    })() : (
-                        typeof conversationName === 'string' && conversationName.length > 0
-                            ? conversationName.charAt(0).toUpperCase()
-                            : '?'
-                    )}
-                </div>
-                <div className="chat-header-info">
-                    <div className="chat-header-name-row">
-                        <h3>{conversationName}</h3>
-                        {isDirectMessage && (
-                            <span className={`friend-badge ${isFriend ? 'is-friend' : 'not-friend'}`}>
-                                {isFriend ? '✓ Friend' : 'Not friend'}
-                            </span>
                         )}
                     </div>
-                    {typingUsers.length > 0 ? (
-                        <div className="typing-indicator">
-                            {typingUsers.join(', ')} is typing...
+                    <div className="chat-header-info">
+                        <div className="chat-header-name-row">
+                            <h3>{conversationName}</h3>
+                            {isDirectMessage && (
+                                <span className={`friend-badge ${isFriend ? 'is-friend' : 'not-friend'}`}>
+                                    {isFriend ? '✓ Friend' : 'Not friend'}
+                                </span>
+                            )}
+                        </div>
+                        {typingUsers.length > 0 ? (
+                            <div className="typing-indicator">
+                                {typingUsers.join(', ')} is typing...
+                            </div>
+                        ) : (
+                            <div className="online-status">Active now</div>
+                        )}
+                    </div>
+                    {!isDirectMessage && (
+                        <button
+                            className="header-action-btn"
+                            title="Thêm thành viên"
+                            onClick={() => setShowAddMember(true)}
+                        >
+                            <UserPlusIcon size={20} />
+                        </button>
+                    )}
+                    <button
+                        className={`header-action-btn ${showDetailPane ? 'active' : ''}`}
+                        title="Chi tiết"
+                        onClick={() => setShowDetailPane((v) => !v)}
+                    >
+                        <InfoIcon size={20} />
+                    </button>
+                </div>
+
+                {showAddMember && conversationId && (
+                    <AddMember
+                        conversationId={conversationId}
+                        existingParticipantIds={participants.map(p => p._id)}
+                        onClose={() => setShowAddMember(false)}
+                        onSuccess={() => {
+                            // Normally we'd refresh participants, but they'll get added via socket eventually
+                            // For now just hide
+                            setShowAddMember(false);
+                        }}
+                    />
+                )}
+
+                <div className="message-list">
+                    {hasMore && messages.length > 0 && (
+                        <button className="btn btn-ghost btn-sm load-more-btn" onClick={loadMore}>
+                            Load older messages
+                        </button>
+                    )}
+
+                    {loading && messages.length === 0 ? (
+                        <div className="message-list-empty">
+                            <span className="empty-icon"><ClockIcon size={40} /></span>
+                            Loading messages...
+                        </div>
+                    ) : messages.length === 0 ? (
+                        <div className="message-list-empty">
+                            <span className="empty-icon"><WaveIcon size={48} /></span>
+                            No messages yet. Say hello!
                         </div>
                     ) : (
-                        <div className="online-status">Active now</div>
+                        messages.map((msg, index) => {
+                            const prevMsg = messages[index - 1];
+                            const nextMsg = messages[index + 1];
+
+                            const isFirstInGroup = !prevMsg || prevMsg.senderId !== msg.senderId;
+                            const isLastInGroup = !nextMsg || nextMsg.senderId !== msg.senderId;
+                            const showAvatar = !isSent(msg) && isFirstInGroup;
+
+                            const sender = participants.find(p => p._id === msg.senderId);
+                            const senderName = sender?.displayName || msg.senderId;
+                            const avatarUrl = sender?.avatar?.url;
+
+                            function isSent(m: Message) {
+                                return m.senderId === userId;
+                            }
+
+                            return (
+                                <MessageBubble
+                                    key={msg._id}
+                                    message={msg}
+                                    isSent={isSent(msg)}
+                                    showAvatar={showAvatar}
+                                    senderName={senderName}
+                                    avatarUrl={avatarUrl}
+                                    isDirectMessage={isDirectMessage}
+                                    isFirstInGroup={isFirstInGroup}
+                                    isLastInGroup={isLastInGroup}
+                                />
+                            );
+                        })
                     )}
+                    <div ref={messagesEndRef} />
                 </div>
-                {!isDirectMessage && (
-                    <button
-                        className="header-action-btn"
-                        title="Thêm thành viên"
-                        onClick={() => setShowAddMember(true)}
-                    >
-                        <UserPlusIcon size={20} />
-                    </button>
-                )}
-            </div>
 
-            {showAddMember && conversationId && (
-                <AddMember
-                    conversationId={conversationId}
-                    existingParticipantIds={participants.map(p => p._id)}
-                    onClose={() => setShowAddMember(false)}
-                    onSuccess={() => {
-                        // Normally we'd refresh participants, but they'll get added via socket eventually
-                        // For now just hide
-                        setShowAddMember(false);
-                    }}
-                />
-            )}
-
-            <div className="message-list">
-                {hasMore && messages.length > 0 && (
-                    <button className="btn btn-ghost btn-sm load-more-btn" onClick={loadMore}>
-                        Load older messages
-                    </button>
-                )}
-
-                {loading && messages.length === 0 ? (
-                    <div className="message-list-empty">
-                        <span className="empty-icon"><ClockIcon size={40} /></span>
-                        Loading messages...
+                <div className="chat-input-area">
+                    <div className="chat-input-row">
+                        <input
+                            className="input"
+                            type="text"
+                            placeholder="Type a message..."
+                            value={newMessage}
+                            onChange={(e) => handleInputChange(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                        />
+                        <button
+                            className="send-btn"
+                            onClick={handleSend}
+                            disabled={!newMessage.trim()}
+                        >
+                            <SendIcon size={20} />
+                        </button>
                     </div>
-                ) : messages.length === 0 ? (
-                    <div className="message-list-empty">
-                        <span className="empty-icon"><WaveIcon size={48} /></span>
-                        No messages yet. Say hello!
-                    </div>
-                ) : (
-                    messages.map((msg, index) => {
-                        const prevMsg = messages[index - 1];
-                        const nextMsg = messages[index + 1];
-
-                        const isFirstInGroup = !prevMsg || prevMsg.senderId !== msg.senderId;
-                        const isLastInGroup = !nextMsg || nextMsg.senderId !== msg.senderId;
-                        const showAvatar = !isSent(msg) && isFirstInGroup;
-
-                        const sender = participants.find(p => p._id === msg.senderId);
-                        const senderName = sender?.displayName || msg.senderId;
-                        const avatarUrl = sender?.avatar?.url;
-
-                        function isSent(m: Message) {
-                            return m.senderId === userId;
-                        }
-
-                        return (
-                            <MessageBubble
-                                key={msg._id}
-                                message={msg}
-                                isSent={isSent(msg)}
-                                showAvatar={showAvatar}
-                                senderName={senderName}
-                                avatarUrl={avatarUrl}
-                                isDirectMessage={isDirectMessage}
-                                isFirstInGroup={isFirstInGroup}
-                                isLastInGroup={isLastInGroup}
-                            />
-                        );
-                    })
-                )}
-                <div ref={messagesEndRef} />
-            </div>
-
-            <div className="chat-input-area">
-                <div className="chat-input-row">
-                    <input
-                        className="input"
-                        type="text"
-                        placeholder="Type a message..."
-                        value={newMessage}
-                        onChange={(e) => handleInputChange(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                    />
-                    <button
-                        className="send-btn"
-                        onClick={handleSend}
-                        disabled={!newMessage.trim()}
-                    >
-                        <SendIcon size={20} />
-                    </button>
                 </div>
             </div>
+
+            {/* Detail pane slides in alongside chat-window */}
+            <DetailPane
+                isOpen={showDetailPane}
+                onClose={() => setShowDetailPane(false)}
+                conversationId={conversationId}
+                conversationName={conversationName}
+                isDirectMessage={isDirectMessage}
+                participants={participants}
+                userId={userId}
+                messages={messages}
+                onOpenProfile={() => { setShowProfileModal(true); }}
+                onOpenSearch={() => { setShowSearchModal(true); }}
+                onParticipantsChange={onParticipantsChange || (() => { })}
+            />
+
+            {/* Floating modals */}
+            <UserProfileModal
+                open={showProfileModal}
+                onClose={() => setShowProfileModal(false)}
+                user={otherParticipant}
+            />
+            <MessageSearchModal
+                open={showSearchModal}
+                onClose={() => setShowSearchModal(false)}
+                messages={messages}
+                participants={participants}
+                userId={userId}
+            />
         </div>
     );
 };

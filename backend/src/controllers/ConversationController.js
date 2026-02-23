@@ -65,6 +65,16 @@ class ConversationController {
             next(error);
         }
     }
+
+    async kickParticipant(req, res, next) {
+        try {
+            const { id, userId } = req.params;
+            const result = await conversationService.kickParticipant(req.user.userId, id, userId);
+            return res.status(200).json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = new ConversationController();

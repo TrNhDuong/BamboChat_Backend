@@ -19,4 +19,7 @@ router.get('/:id/messages', conversationController.getMessages);
 // POST /api/conversations/:id/participants
 router.post('/:id/participants', conversationController.addParticipants);
 
+// DELETE /api/conversations/:id/participants/:userId  (kick member)
+router.delete('/:id/participants/:userId', conversationController.kickParticipant);
+
 module.exports = router;

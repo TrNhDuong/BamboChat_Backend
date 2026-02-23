@@ -50,5 +50,5 @@ sequenceDiagram
 
 ## 4. Tối ưu hóa
 
-*   **Rooms**: Mỗi cuộc hội thoại (`conversation_id`) là một Room riêng biệt. Server chỉ broadcast tin nhắn cho các Socket đang ở trong Room đó.
+*   **Rooms**: Each conversation (`conversation_id`) is a private Room. The server broadcasts messages only to sockets currently in that room. This applies to both **1-on-1** and **Group chats**.
 *   **Offline Handling**: Nếu User không online, Server vẫn lưu tin nhắn vào DB. Khi User online trở lại, Frontend sẽ gọi API `/messages` để lấy lịch sử tin nhắn chưa đọc.

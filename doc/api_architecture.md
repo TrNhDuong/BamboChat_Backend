@@ -33,8 +33,9 @@ Tất cả các API (ngoại trừ Auth) đều yêu cầu Header: `Authorizatio
 
 | Method | Endpoint | Nhiệm vụ | Ghi chú |
 | :--- | :--- | :--- | :--- |
-| GET | `/search` | Tìm kiếm người dùng | Theo `id` (parm query). |
-| PUT | `/profile` | Cập nhật hồ sơ | Thay đổi `displayName`, `bio`. |
+| GET | `/search` | Search for users | By `id` (query param). |
+| PUT | `/profile` | Update profile | Change `displayName`, `bio`. |
+| POST | `/avatar` | Upload avatar | Multer-based image upload. |
 
 ### C. Bạn bè (Friends) - `/api/friends`
 
@@ -51,9 +52,11 @@ Tất cả các API (ngoại trừ Auth) đều yêu cầu Header: `Authorizatio
 
 | Method | Endpoint | Nhiệm vụ | Ghi chú |
 | :--- | :--- | :--- | :--- |
-| POST | `/` | Tạo/Lấy phòng chat | Dùng cho cả chat 1-1 và Group. |
-| GET | `/` | Lấy danh sách phòng | Trả về các phòng kèm tin nhắn cuối. |
-| GET | `/:id/messages` | Lấy lịch sử tin nhắn | Hỗ trợ Pagination qua `cursor`. |
+| POST | `/` | Create/Get conversation | For 1-1 and Group chats. |
+| GET | `/` | Get conversation list | Lists rooms with the last message. |
+| GET | `/:id/messages` | Get message history | Supports pagination via `cursor`. |
+| POST | `/:id/participants` | Add members | Add multiple users to a group. |
+| DELETE | `/:id/participants/:userId` | Kick participant | Admin-only removal of member. |
 
 ---
 

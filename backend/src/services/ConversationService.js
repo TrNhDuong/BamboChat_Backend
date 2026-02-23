@@ -96,6 +96,27 @@ class ConversationService {
         logger.info(`Participants added to conversation ${conversationId}`, { requesterId, addedCount: addedParticipants.length });
         return { success: true, addedCount: addedParticipants.length };
     }
+
+    /**
+     * Kick (remove) a participant from a group conversation.
+     * Only admins can kick; cannot kick yourself.
+     */
+    async kickParticipant(requesterId, conversationId, targetUserId) {
+        const conversation = await conversationRepository.findById(conversationId);
+        if (!conversation) throw { status: 404, message: 'Conversation not found' };
+        if (conversation.type !== 'group') throw { status: 400, message: 'Can only remove members from group conversations' };
+
+        const requester = await participantRepository.findByConversationAndUser(conversationId, requesterId);
+        if (!requester) throw { status: 403, message: 'You are not a member of this conversation' };
+        if (requester.role !== 'admin') throw { status: 403, message: 'Only admins can remove members' };
+        if (requesterId === targetUserId) throw { status: 400, message: 'Cannot kick yourself' };
+
+        const removed = await participantRepository.removeParticipant(conversationId, targetUserId);
+        if (!removed) throw { status: 404, message: 'Member not found in this conversation' };
+
+        logger.info(`User ${targetUserId} kicked from conversation ${conversationId} by ${requesterId}`);
+        return { success: true };
+    }
 }
 
 module.exports = new ConversationService();

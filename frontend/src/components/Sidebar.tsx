@@ -149,7 +149,7 @@ const Sidebar = ({
                         className={`sidebar-tab ${activeTab === 'chats' ? 'active' : ''}`}
                         onClick={() => onTabChange('chats')}
                     >
-                        Tất cả
+                        Cuộc trò chuyện
                     </button>
                     <button
                         className={`sidebar-tab ${activeTab === 'friends' ? 'active' : ''}`}

@@ -36,9 +36,13 @@ Tài liệu này hướng dẫn bạn cách thiết lập môi trường và ch�
     BREVO_API_KEY="your_brevo_api_key"
     BREVO_URL="https://api.brevo.com/v3/smtp/email"
 
-    # Google OAuth (để đăng nhập bằng Google)
     GOOGLE_CLIENT_ID="your_google_client_id"
     GOOGLE_CLIENT_SECRET="your_google_client_secret"
+
+    # Cloudinary (for avatar uploads)
+    CLOUDINARY_NAME="your_cloud_name"
+    CLOUDINARY_API_KEY="your_api_key"
+    CLOUDINARY_API_SECRET="your_api_secret"
     ```
 4.  **Chạy Backend**:
     *   Chế độ phát triển (Auto-reload): `npm run dev`

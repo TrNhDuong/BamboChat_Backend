@@ -48,7 +48,7 @@ class ConversationRepository {
 
         // Attach participants to each conversation
         const allParticipants = await Participant.find({ conversationId: { $in: convoIds } })
-            .populate('userId', 'displayName _id avatar')
+            .populate('userId', 'displayName _id avatar bio')
             .lean();
 
         // Fetch last messages using Message model
@@ -74,9 +74,11 @@ class ConversationRepository {
             conv.participants = allParticipants
                 .filter((p) => p.conversationId.toString() === conv._id.toString())
                 .map((p) => ({
-                    _id: p.userId?._id || p.userId, // fallback if populate fails
+                    _id: p.userId?._id || p.userId,
                     displayName: p.userId?.displayName || null,
                     avatar: p.userId?.avatar || null,
+                    bio: p.userId?.bio || null,
+                    role: p.role || 'member',
                 }));
 
             conv.lastMessage = lastMessageMap[conv._id] || null;

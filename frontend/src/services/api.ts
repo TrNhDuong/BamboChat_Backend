@@ -98,6 +98,9 @@ export const conversationAPI = {
         api.post<{ success: boolean; addedCount: number }>(`/conversations/${conversationId}/participants`, {
             participantIds,
         }),
+
+    kickParticipant: (conversationId: string, userId: string) =>
+        api.delete<{ success: boolean }>(`/conversations/${conversationId}/participants/${userId}`),
 };
 
 export default api;

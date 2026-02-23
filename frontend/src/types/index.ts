@@ -23,7 +23,7 @@ export interface Conversation {
     _id: string;
     type: 'direct_message' | 'group';
     name: string | null;
-    participants: { _id: string; displayName: string | null; avatar?: { url: string; public_id: string } | null }[];
+    participants: { _id: string; displayName: string | null; avatar?: { url: string; public_id: string } | null; bio?: string | null; role?: string }[];
     lastMessage?: {
         content: string;
         createdAt: string;
