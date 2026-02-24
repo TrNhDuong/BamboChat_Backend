@@ -56,9 +56,8 @@ class AuthController {
         const refreshToken = generateRefreshToken(payload);
 
         // Redirect to frontend with tokens
-        // Adjust the frontend URL as needed
-        const frontendUrl = 'http://localhost:5173/google-callback';
-        res.redirect(`${frontendUrl}?accessToken=${accessToken}&refreshToken=${refreshToken}&userId=${user._id}&email=${user.email}`);
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        res.redirect(`${frontendUrl}/google-callback?accessToken=${accessToken}&refreshToken=${refreshToken}&userId=${user._id}&email=${user.email}`);
     }
 }
 
