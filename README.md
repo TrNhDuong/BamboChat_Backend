@@ -23,6 +23,7 @@ BamboChat is a high-performance backend API and WebSocket server for real-time m
 *   **Socket.io**: Real-time layer.
 *   **Cloudinary & Multer**: Media processing.
 *   **Brevo SDK**: SMTP utility.
+*   **Docker & Docker Compose**: Containerization and orchestration.
 
 ---
 

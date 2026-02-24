@@ -7,6 +7,7 @@ This guide will help you set up the environment and run the BamboChat server on 
 ## 1. Prerequisites
 
 *   **Node.js**: Version 18.x or higher (Node 22 LTS recommended).
+*   **Docker & Docker Compose**: (Optional) For containerized deployment.
 *   **MongoDB**: A MongoDB Atlas Cluster or a local MongoDB instance.
 *   **Cloudinary Account**: Required for media storage.
 
@@ -47,7 +48,31 @@ This guide will help you set up the environment and run the BamboChat server on 
 
 ---
 
-## 3. Important Notes
+## 3. Running with Docker 🐳
+
+If you prefer using Docker, you can run the entire backend with a single command:
+
+1.  **Start the container**:
+    ```bash
+    docker-compose up -d
+    ```
+2.  **Rebuild after changes**:
+    If you change environment variables or add new dependencies:
+    ```bash
+    docker-compose up -d --build
+    ```
+3.  **Check logs**:
+    ```bash
+    docker-compose logs -f
+    ```
+4.  **Stopping**:
+    ```bash
+    docker-compose down
+    ```
+
+---
+
+## 4. Important Notes
 
 *   **Google OAuth**: Ensure you add `http://localhost:5000/api/auth/google/callback` to the **Authorized redirect URIs** in your Google Cloud Console.
 *   **Cloudinary**: Verify that the API keys in your `.env` are correct for successful avatar uploads.
