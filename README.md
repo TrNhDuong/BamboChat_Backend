@@ -24,6 +24,7 @@ BamboChat is a high-performance backend API and WebSocket server for real-time m
 *   **Cloudinary & Multer**: Media processing.
 *   **Brevo SDK**: SMTP utility.
 *   **Docker & Docker Compose**: Containerization and orchestration.
+*   **Redis**: Distributed message synchronization for Socket.io scaling.
 
 ---
 
@@ -58,6 +59,7 @@ The project uses **GitHub Actions** for automated Deployment to **Azure App Serv
 2.  **Build**: Docker images are built locally on the GitHub runner.
 3.  **Registry**: Images are pushed to **Azure Container Registry (ACR)**.
 4.  **Deployment**: Uses **Azure CLI** to update the Web App's container image and registry credentials automatically.
+5.  **Scaling**: Supports **Horizontal Scaling** via **Socket.io Redis Adapter**, allowing multiple server instances to sync real-time messages.
 
 ---
 

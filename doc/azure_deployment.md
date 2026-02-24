@@ -101,6 +101,20 @@ The current pipeline performs these steps on every push to `main`:
 
 ---
 
+## 🛰️ Step 6: Horizontal Scaling (Redis Adapter)
+
+To handle thousands of concurrent users, you can scale Out (run multiple instances).
+
+1.  **Azure Cache for Redis**: Create a Redis instance in the Azure Portal.
+2.  **Configuration**:
+    - Add `REDIS_URL` to your Web App's **Environment Variables**.
+    - Format: `redis://:<password>@<name>.redis.cache.windows.net:6380` (use port 6379 for non-SSL).
+3.  **Benefits**:
+    - Automatic synchronization of messages across all server instances.
+    - Zero message loss even if users are connected to different physical servers.
+
+---
+
 ## 📝 Important Notes
 *   **CORS**: Remember to update your CORS settings in `src/server.js` if your frontend is hosted on a different Azure URL.
 *   **Database**: Ensure your MongoDB Atlas allows connections from Azure's IP addresses (or allow all IPs `0.0.0.0/0` temporarily).

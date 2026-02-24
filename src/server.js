@@ -4,6 +4,8 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
+const { createClient } = require('redis');
+const { createAdapter } = require('@socket.io/redis-adapter');
 
 const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/errorHandler');
@@ -33,6 +35,19 @@ const io = new Server(server, {
         methods: ['GET', 'POST'],
     },
 });
+
+// Configure Redis adapter if REDIS_URL is provided
+if (process.env.REDIS_URL) {
+    const pubClient = createClient({ url: process.env.REDIS_URL });
+    const subClient = pubClient.duplicate();
+
+    Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
+        io.adapter(createAdapter(pubClient, subClient));
+        logger.info('Socket.io Redis adapter connected');
+    }).catch((err) => {
+        logger.error('Socket.io Redis adapter error:', err);
+    });
+}
 
 // ─────────────────────────────────────────────
 // Middleware
