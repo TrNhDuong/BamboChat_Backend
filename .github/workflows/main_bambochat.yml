@@ -1,4 +1,4 @@
-name: Azure CI/CD - BamboChat (OIDC Secure)
+name: Azure CI/CD - BamboChat (Secure OIDC)
 
 on:
   push:
@@ -24,7 +24,10 @@ jobs:
 
       - name: Build and Push to ACR
         run: |
-          az acr build --registry BamboChat --resource-group bambo-project --image bambochat-backend:${{ github.sha }} .
+          az account show
+          
+          # 2. Truy vết giao tiếp mạng: Bật cờ --debug
+          az acr build --registry BamboChat --resource-group bambo_project --image bambochat-backend:${{ github.sha }} . --debug
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
