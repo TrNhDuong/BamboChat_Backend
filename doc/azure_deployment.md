@@ -72,25 +72,32 @@ az acr build --registry BamboChat --image bambochat-backend:v2 .
 
 ## ⚡ Step 5: Automate with CI/CD (GitHub Actions)
 
-Đây là cách "xịn" nhất: Cứ push code lên GitHub là Azure tự động cập nhật.
+The project uses a custom GitHub Actions workflow for direct control over the deployment process using the Azure CLI.
 
-### 1. Truy cập Deployment Center
-Vào Azure Portal -> Web App của bạn -> **Deployment Center**.
+### 1. Configuration (GitHub Secrets/Variables)
+Ensure these items are configured in your GitHub Repo -> **Settings** -> **Secrets and variables** -> **Actions**:
+*   `AZUREAPPSERVICE_CLIENTID_...`
+*   `AZUREAPPSERVICE_TENANTID_...`
+*   `AZUREAPPSERVICE_SUBSCRIPTIONID_...`
 
-### 2. Thiết lập GitHub Action
-- **Source**: Chọn **GitHub**.
-- **Change Provider**: Nếu chưa login, hãy nhấn để Azure kết nối với tài khoản GitHub của bạn.
-- **Organization/Repository/Branch**: Chọn đúng repo và branch (`main`) của bạn.
-- **Authentication**: Chọn **User-assigned identity** (khuyên dùng) hoặc **Service Principal**.
-- **Registry settings**: Chọn đúng ACR `BamboChat` của bạn.
+### 2. Authentication (Secure OIDC)
+Instead of using a long-lived Client Secret, we use **OIDC**:
+1.  Go to Azure Portal -> **Microsoft Entra ID** -> **App registrations**.
+2.  Select your Service Principal -> **Certificates & secrets** -> **Federated credentials**.
+3.  Add a credential for the GitHub repository and branch (`main`).
 
-### 3. Nhấn Save
-- Sau khi nhấn **Save**, Azure sẽ tự động tạo một file `.github/workflows/main_xxx.yml` vào thẳng repo GitHub của bạn.
-- **Cơ chế**:
-    1.  Mỗi khi bạn `git push`, GitHub Actions sẽ khởi chạy.
-    2.  Nó đọc `Dockerfile` trong repo để build image.
-    3.  Nó đẩy (push) image đó lên Azure Container Registry (ACR).
-    4.  Nó thông báo cho Web App biết là có bản mới để kéo về.
+### 3. Workflow Mechanism (`main_bambochat.yml`)
+The current pipeline performs these steps on every push to `main`:
+1.  **Azure Login (OIDC)**: Authenticates using the client/tenant/subscription IDs.
+2.  **Local Docker Build**: Builds the image on the GitHub Actions runner (Ubuntu VM).
+3.  **Local Docker Push**: Pushes the image to ACR (`bambochat.azurecr.io`).
+4.  **Native CLI Deployment**:
+    - Updates the ACR to allow admin access if needed.
+    - Retrieves ACR credentials dynamically.
+    - Forces the Web App to use the new image tag (using `github.sha`) via `az webapp config container set`.
+
+> [!TIP]
+> This "Native CLI" strategy is more reliable than standard marketplace actions because it bypasses the `TasksOperationsNotAllowed` errors often encountered with `az acr build`.
 
 ---
 
